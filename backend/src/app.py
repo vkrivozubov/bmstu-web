@@ -9,13 +9,14 @@ from swagger_ui import api_doc
 from Domain.user import*
 from Domain.dealership import*
 from Domain.car import*
+import argparse
 
 app = Flask(__name__)
 
-fabrique = RepositoryFabrique()
-user_repository = fabrique.create_user_repository()
-dealership_respository = fabrique.create_dealership_repository()
-car_repository = fabrique.create_car_repository()
+fabrique = None
+user_repository = None
+dealership_respository = None
+car_repository = None
 
 api_doc(app, config_path='../config/swagger.yaml', url_prefix='/api/doc', title='API doc')
 
@@ -204,4 +205,15 @@ def change_car_availability():
     return send_ok()
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--port', type=int)
+    parser.add_argument('--readonly', type=str)
+    args = parser.parse_args()
+
+    fabrique = RepositoryFabrique(args.port, True if args.readonly == "true" else False)
+
+    user_repository = fabrique.create_user_repository()
+    dealership_respository = fabrique.create_dealership_repository()
+    car_repository = fabrique.create_car_repository()
+
     app.run(debug=True)
