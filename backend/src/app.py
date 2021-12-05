@@ -6,7 +6,9 @@ from apispec.ext.marshmallow import MarshmallowPlugin
 from repository_fabruque import RepositoryFabrique
 from marshmallow import*
 from swagger_ui import api_doc
-from Domain.user import *
+from Domain.user import*
+from Domain.dealership import*
+from Domain.car import*
 
 app = Flask(__name__)
 
@@ -92,31 +94,114 @@ def login_user():
 
 @app.route("/api/dealership/dealerships", methods=['GET'])
 def get_dealerships():
-    ()
+    dealerships = dealership_respository.get_dealerships()
+    
+    DTO_dealerships = []
+    converter = DealershipDomainToDTOConverter()
+
+    for dealer in dealerships:
+        DTO_dealerships.append(converter.convert(dealer).get_dict())
+
+    return jsonify(DTO_dealerships), 200
 
 @app.route("/api/dealership", methods=['POST'])
 def create_dealership():
-    ()
+    req = request.json
+    if not req or not 'name' in req or not 'description' in req or not 'owner_id' in req:
+        return send_error(400)
+
+    new_dealership_domain = Dealership(
+        None,
+        req['name'],
+        req['description'],
+        req['owner_id']
+    )
+
+    dealerships = dealership_respository.get_dealerships()
+
+    for dealer in dealerships:
+        if dealer.name == new_dealership_domain.name:
+            return send_error(400)
+
+    try:
+        dealership_respository.create_dealership(new_dealership_domain)
+    except:
+        return send_error(500)
+
+    return send_ok()
+
 
 @app.route("/api/dealership/<int:id>", methods=['DELETE'])
 def delete_dealership(id):
-    ()
+    try:
+        dealership_respository.remove_dealership(id)
+    except:
+        return send_error(500)
+
+    return send_ok()
 
 @app.route("/api/car/cars/<int:dealership_id>", methods=['GET'])
 def get_cars_for_dealership(dealership_id):
-    ()
+    cars = car_repository.get_cars(dealership_id)
+
+    converter = CarDomainToDTOConverter()
+    DTO_cars = []
+
+    for car in cars:
+        DTO_cars.append(converter.convert(car).get_dict())
+
+    return jsonify(DTO_cars), 200
 
 @app.route("/api/car/<int:id>", methods=['DELETE'])
 def delete_car(id):
-    ()
+    try:
+        car_repository.delete_car(id)
+    except:
+        return send_error(500)
+
+    return send_ok()
 
 @app.route("/api/car", methods=['POST'])
 def create_car():
-    ()
+    req = request.json
+    if not req\
+        or not 'model' in req\
+        or not 'cost' in req\
+        or not 'dealership_id' in req:
+        return send_error(400)
+
+    new_car_domain = Car(
+        None,
+        req['model'],
+        req['cost'],
+        req['dealership_id'],
+        True
+    )
+
+    try:
+        car_repository.create_car(new_car_domain)
+    except:
+        return send_error(500)
+    
+    return send_ok()
 
 @app.route("/api/car/availabilty", methods=['PATCH'])
 def change_car_availability():
-    ()
+    req = request.json
+    if not req or not 'is_available' in req or not 'car_id' in req:
+        return send_error(400)
+
+    car_id = req['car_id']
+
+    try:
+        if req['is_available']:
+            car_repository.rent_car(car_id)
+        else:
+            car_repository.unrent_car(car_id)
+    except:
+        return send_error(500)
+
+    return send_ok()
 
 if __name__ == "__main__":
     app.run(debug=True)

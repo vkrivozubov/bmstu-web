@@ -14,18 +14,6 @@ tags:
 
 components:
   schemas:
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-        username:
-          type: string
-        password:
-          type: string
-        role:
-          type: string
-
     Dealership:
       type: array
       items:
@@ -336,9 +324,12 @@ paths:
                   type: string
                 cost:
                   type: integer
+                dealership_id:
+                  type: string
               required:
                 - model
                 - type
+                - dealership_id
       responses:
         '200':
           description: Success
@@ -372,8 +363,11 @@ paths:
               properties:
                 is_available:
                   type: boolean
+                car_id:
+                  type: integer
               required:
                 - is_available
+                - car_id
       responses:
         '200':
           description: Success

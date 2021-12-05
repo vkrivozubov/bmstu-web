@@ -31,5 +31,5 @@ class UserRepository:
         password = user_domain.password
         role = user_domain.role
         cur = self.conn.cursor()
-        cur.execute(f'INSERT INTO users (username, password, role) VALUES (\'{username}\', \'{password}\', \'{role}\')')
+        cur.execute(f'INSERT INTO users (username, password, role) VALUES (\'{username}\', \'{password}\', \'{role}\');')
         self.conn.commit()
