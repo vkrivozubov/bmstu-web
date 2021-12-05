@@ -13,12 +13,11 @@ Web-приложение для дисциплины Веб-программир
 
 ## Use-case диаграмма системы
 ### Неавторизованный пользователь
-
+![alt text](diagrams/unauthorized.png)
 ### Авторизованный пользователь - арендующий
-
+![alt text](diagrams/authorized-renter.png)
 ### Авторизованный пользователь - дилер
-
+![alt text](diagrams/authorized-dealer.png)
 
 ## ER-диаграмма в нотации Чена
-
-## Диаграмма сущностей базы данных
+![alt text](diagrams/chen.png)
