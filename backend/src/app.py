@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask.json import jsonify
 from apispec import APISpec
 from apispec_webframeworks.flask import FlaskPlugin
@@ -9,16 +9,19 @@ from swagger_ui import api_doc
 from Domain.user import*
 from Domain.dealership import*
 from Domain.car import*
+from flask_cors import CORS
+
 import argparse
 
 app = Flask(__name__)
 
+cors = None
 fabrique = None
 user_repository = None
 dealership_respository = None
 car_repository = None
 
-api_doc(app, config_path='../config/swagger.yaml', url_prefix='/api/doc', title='API doc')
+api_doc(app, config_path='../config/swagger.yaml', url_prefix='/api/v1', title='API doc')
 
 spec = APISpec(
     title="flask-api-swagger-doc",
@@ -53,7 +56,11 @@ def send_ok():
 def hello():
     return "Hello world!"
 
-@app.route("/api/user", methods=['POST'])
+@app.route("/api/v1/swagger/<path:path>")
+def send_index(path):
+    return send_from_directory("/Users/vlad/Downloads/bmstu-web/backend/static/dist/", path)
+
+@app.route("/api/v1/user", methods=['POST'])
 def register_user():
     req = request.json
     if not req or not 'username' in req or not 'password' in req or not 'role' in req:
@@ -74,7 +81,7 @@ def register_user():
 
     return send_ok()
 
-@app.route("/api/user/login", methods=['POST'])
+@app.route("/api/v1/user/login", methods=['POST'])
 def login_user():
     req = request.json
     if not req or not 'username' in req or not 'password' in req:
@@ -93,10 +100,9 @@ def login_user():
 
     return send_error(400)
 
-@app.route("/api/dealership/dealerships", methods=['GET'])
+@app.route("/api/v1/dealership/dealerships", methods=['GET'])
 def get_dealerships():
     dealerships = dealership_respository.get_dealerships()
-    
     DTO_dealerships = []
     converter = DealershipDomainToDTOConverter()
 
@@ -105,7 +111,7 @@ def get_dealerships():
 
     return jsonify(DTO_dealerships), 200
 
-@app.route("/api/dealership", methods=['POST'])
+@app.route("/api/v1/dealership", methods=['POST'])
 def create_dealership():
     req = request.json
     if not req or not 'name' in req or not 'description' in req or not 'owner_id' in req:
@@ -132,7 +138,7 @@ def create_dealership():
     return send_ok()
 
 
-@app.route("/api/dealership/<int:id>", methods=['DELETE'])
+@app.route("/api/v1/dealership/<int:id>", methods=['DELETE'])
 def delete_dealership(id):
     try:
         dealership_respository.remove_dealership(id)
@@ -141,7 +147,7 @@ def delete_dealership(id):
 
     return send_ok()
 
-@app.route("/api/car/cars/<int:dealership_id>", methods=['GET'])
+@app.route("/api/v1/car/cars/<int:dealership_id>", methods=['GET'])
 def get_cars_for_dealership(dealership_id):
     cars = car_repository.get_cars(dealership_id)
 
@@ -153,7 +159,7 @@ def get_cars_for_dealership(dealership_id):
 
     return jsonify(DTO_cars), 200
 
-@app.route("/api/car/<int:id>", methods=['DELETE'])
+@app.route("/api/v1/car/<int:id>", methods=['DELETE'])
 def delete_car(id):
     try:
         car_repository.delete_car(id)
@@ -162,7 +168,7 @@ def delete_car(id):
 
     return send_ok()
 
-@app.route("/api/car", methods=['POST'])
+@app.route("/api/v1/car", methods=['POST'])
 def create_car():
     req = request.json
     if not req\
@@ -186,7 +192,7 @@ def create_car():
     
     return send_ok()
 
-@app.route("/api/car/availabilty", methods=['PATCH'])
+@app.route("/api/v1/car/availabilty", methods=['PATCH'])
 def change_car_availability():
     req = request.json
     if not req or not 'is_available' in req or not 'car_id' in req:
@@ -208,6 +214,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--port', type=int)
     parser.add_argument('--readonly', type=str)
+    parser.add_argument('--back_port', type=str)
     args = parser.parse_args()
 
     fabrique = RepositoryFabrique(args.port, True if args.readonly == "true" else False)
@@ -216,4 +223,6 @@ if __name__ == "__main__":
     dealership_respository = fabrique.create_dealership_repository()
     car_repository = fabrique.create_car_repository()
 
-    app.run(debug=True)
+    cors = CORS(app)
+    app.logger.disabled = True
+    app.run(debug=False,port=int(args.back_port))

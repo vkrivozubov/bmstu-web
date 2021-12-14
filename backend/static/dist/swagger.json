@@ -1,0 +1,610 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "API for web labs",
+    "version": "1.0.0",
+    "title": "Cars Aggregator API"
+  },
+  "tags": [
+    {
+      "name": "User",
+      "description": "auth for user"
+    },
+    {
+      "name": "Dealership",
+      "description": "dealership data manipulation"
+    },
+    {
+      "name": "Car",
+      "description": "car data manipulation"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Dealership": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "owner_id": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "Car": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "model": {
+              "type": "string"
+            },
+            "cost": {
+              "type": "integer"
+            },
+            "is_available": {
+              "type": "boolean"
+            }
+          }
+        }
+      },
+      "Success": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Success"
+          }
+        }
+      },
+      "BadRequest": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Bad request"
+          }
+        }
+      },
+      "InternalError": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": 500
+          },
+          "message": {
+            "type": "string",
+            "example": "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/v1/user": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Adds a new user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password",
+                  "role"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/user/login": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Allow user to Log In",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dealership/dealerships": {
+      "get": {
+        "tags": [
+          "Dealership"
+        ],
+        "summary": "Get all dealerships",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dealership"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dealership": {
+      "post": {
+        "tags": [
+          "Dealership"
+        ],
+        "summary": "Create new dealership",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "owner_id": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "name",
+                  "description",
+                  "owner_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dealership/{id}": {
+      "delete": {
+        "tags": [
+          "Dealership"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "summary": "Delete dealership",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/car/cars/{dealership_id}": {
+      "get": {
+        "tags": [
+          "Car"
+        ],
+        "summary": "Get cars for dealership",
+        "parameters": [
+          {
+            "name": "dealership_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Car"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/car/{id}": {
+      "delete": {
+        "tags": [
+          "Car"
+        ],
+        "summary": "Delete car",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/car": {
+      "post": {
+        "tags": [
+          "Car"
+        ],
+        "summary": "Create new car",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "model": {
+                    "type": "string"
+                  },
+                  "cost": {
+                    "type": "integer"
+                  },
+                  "dealership_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "model",
+                  "type",
+                  "dealership_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/car/availabilty": {
+      "patch": {
+        "tags": [
+          "Car"
+        ],
+        "summary": "Change car availability",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "is_available": {
+                    "type": "boolean"
+                  },
+                  "car_id": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "is_available",
+                  "car_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "SwaggerHub API Auto Mocking",
+      "url": "http://localhost:8080"
+    }
+  ]
+}
