@@ -44,7 +44,6 @@ def send_error(error_code):
 
     return jsonify(error), error_code
 
-
 def send_ok():
     response = {
         'status': '200',
@@ -60,7 +59,7 @@ def hello():
 def send_index(path):
     return send_from_directory("/Users/vlad/Downloads/bmstu-web/backend/static/dist/", path)
 
-@app.route("/api/v1/user", methods=['POST'])
+@app.route("/api/v1/users/user", methods=['POST'])
 def register_user():
     req = request.json
     if not req or not 'username' in req or not 'password' in req or not 'role' in req:
@@ -81,7 +80,7 @@ def register_user():
 
     return send_ok()
 
-@app.route("/api/v1/user/login", methods=['POST'])
+@app.route("/api/v1/users/login", methods=['POST'])
 def login_user():
     req = request.json
     if not req or not 'username' in req or not 'password' in req:
@@ -100,7 +99,7 @@ def login_user():
 
     return send_error(400)
 
-@app.route("/api/v1/dealership/dealerships", methods=['GET'])
+@app.route("/api/v1/dealerships", methods=['GET'])
 def get_dealerships():
     dealerships = dealership_respository.get_dealerships()
     DTO_dealerships = []
@@ -111,7 +110,7 @@ def get_dealerships():
 
     return jsonify(DTO_dealerships), 200
 
-@app.route("/api/v1/dealership", methods=['POST'])
+@app.route("/api/v1/dealerships/dealership", methods=['POST'])
 def create_dealership():
     req = request.json
     if not req or not 'name' in req or not 'description' in req or not 'owner_id' in req:
@@ -137,8 +136,7 @@ def create_dealership():
 
     return send_ok()
 
-
-@app.route("/api/v1/dealership/<int:id>", methods=['DELETE'])
+@app.route("/api/v1/dealerships/<int:id>", methods=['DELETE'])
 def delete_dealership(id):
     try:
         dealership_respository.remove_dealership(id)
@@ -147,7 +145,7 @@ def delete_dealership(id):
 
     return send_ok()
 
-@app.route("/api/v1/car/cars/<int:dealership_id>", methods=['GET'])
+@app.route("/api/v1/cars/<int:dealership_id>", methods=['GET'])
 def get_cars_for_dealership(dealership_id):
     cars = car_repository.get_cars(dealership_id)
 
@@ -159,7 +157,7 @@ def get_cars_for_dealership(dealership_id):
 
     return jsonify(DTO_cars), 200
 
-@app.route("/api/v1/car/<int:id>", methods=['DELETE'])
+@app.route("/api/v1/cars/car/<int:id>", methods=['DELETE'])
 def delete_car(id):
     try:
         car_repository.delete_car(id)
@@ -168,7 +166,7 @@ def delete_car(id):
 
     return send_ok()
 
-@app.route("/api/v1/car", methods=['POST'])
+@app.route("/api/v1/cars/car", methods=['POST'])
 def create_car():
     req = request.json
     if not req\
@@ -192,7 +190,7 @@ def create_car():
     
     return send_ok()
 
-@app.route("/api/v1/car/availabilty", methods=['PATCH'])
+@app.route("/api/v1/cars/car/availabilty", methods=['PATCH'])
 def change_car_availability():
     req = request.json
     if not req or not 'is_available' in req or not 'car_id' in req:

@@ -74,7 +74,7 @@ components:
           example: Internal error
 
 paths:
-  /api/v1/user:
+  /api/v1/users/user:
     post:
       tags:
         - User
@@ -115,7 +115,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalError'
 
-  /api/v1/user/login:
+  /api/v1/users/login:
     post:
       tags:
         - User
@@ -153,7 +153,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalError'
 
-  /api/v1/dealership/dealerships:
+  /api/v1/dealerships:
     get:
       tags:
         - Dealership
@@ -172,7 +172,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequest'
 
-  /api/v1/dealership:
+  /api/v1/dealerships/dealership:
     post:
       tags:
         - Dealership
@@ -213,7 +213,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalError'
 
-  /api/v1/dealership/{id}:
+  /api/v1/dealerships/{id}:
     delete:
       tags:
         - Dealership
@@ -245,7 +245,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalError'
 
-  /api/v1/car/cars/{dealership_id}:
+  /api/v1/cars/{dealership_id}:
     get:
       tags:
         - Car
@@ -277,7 +277,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalError'
 
-  /api/v1/car/{id}:
+  /api/v1/cars/car/{id}:
     delete:
       tags:
         - Car
@@ -309,7 +309,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalError'
 
-  /api/v1/car:
+  /api/v1/cars/car:
     post:
       tags:
         - Car
@@ -350,7 +350,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalError'
 
-  /api/v1/car/availabilty:
+  /api/v1/cars/car/availabilty:
     patch:
       tags:
         - Car
