@@ -31,66 +31,46 @@
 </template>
 
 <script>
-import axios from 'axios';
+import ApiClient from '@/services/ApiClient'
+import Storage from '@/services/Storage'
 
 export default {
   data() {
     return {
       dealerships: [],
-      role: null
+      role: null,
+      client: null,
+      storage: null
     };
   },
   methods: {
     goToDealership(id) {
-      console.log(id);
       this.$router.push('/dealerships/:'+id);
     },
     getDealerships() {
-      const path = 'https://localhost/api/v1/dealerships';
-      console.log(localStorage.getItem('token'));
-      let token = localStorage.getItem('token');
-      if (token != null) {
-        console.log(localStorage.getItem('token'));
-        axios.get(path, {
-            headers: {
-                'Authorization': `${token}`
-            }
-        })
-            .then((res) => {
-                this.dealerships = res.data;
-            })
-            .catch((error) => {
-                localStorage.removeItem('token');
-                localStorage.removeItem('role');
-                localStorage.removeItem('id');
-                this.$router.push('/login');
-                console.error(error);
-            });
-      }
+      this.client.fetchDealerships()
+      .then((res) => {
+          this.dealerships = res.data;
+      })
+      .catch((error) => {
+          this.$router.push('/login');
+      })
     },
     addDealership() {
         this.$router.push('/dealerships/new');
     },
     deleteDealership(id) {
-        const path = 'https://localhost/api/v1/dealerships/'+id;
-        let token = localStorage.getItem('token');
-        if (token != null) {
-        axios.delete(path, {
-            headers: {
-                'Authorization': `${token}`
-            }
+        this.client.deleteDealership(id)
+        .then((res) => {
+          this.$router.push('/dealerships')
         })
-            .then((res) => {
-                this.$router.push('/dealerships')
-            })
-            .catch((error) => {
-            console.error(error);
-            });
-      }
     }
   },
   created() {
-    this.role = localStorage.getItem('role')
+    const storage = new Storage(window.localStorage);
+    this.role = storage.get('role');
+    this.storage = storage;
+    this.client = new ApiClient();
     this.getDealerships();
   },
 };

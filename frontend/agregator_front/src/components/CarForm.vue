@@ -27,7 +27,8 @@
 </template>
 
 <script>
-import axios from 'axios';
+import ApiClient from '@/services/ApiClient'
+
 export default {
     data() {
         return {
@@ -38,24 +39,12 @@ export default {
     },
     methods: {
         handleAddNewCar() {
-            if (this.model.length > 0 && this.cost.length > 0) {
-                axios.post('https://localhost/api/v1/cars/car',
-                    {
-                        model: this.model,
-                        cost: this.cost,
-                        dealership_id: this.dealership_id
-                    }, {
-                    headers: {
-                        'Authorization': `${localStorage.getItem('token')}`
-                    }
-                })
-                .catch(function (error) {
-                    console.error(error.response);
-                });
-            } else {
-                this.model = "";
-                this.cost = "";
-            }
+            const client = new ApiClient();
+            client.addCar(
+                this.model,
+                this.cost,
+                this.dealership_id
+            );
         },
         goBack() {
             this.$router.push('/dealerships/'+this.dealership_id);

@@ -39,5 +39,6 @@ class DealershipRepository:
 
     def remove_dealership(self, id):
         cur = self.conn.cursor()
+        cur.execute(f'DELETE FROM cars WHERE dealership_id = {id}')
         cur.execute(f'DELETE FROM dealerships WHERE id = {id}')
         self.conn.commit()

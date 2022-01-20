@@ -22,7 +22,8 @@
 </template>
 
 <script>
-import axios from 'axios';
+import ApiClient from '@/services/ApiClient'
+
 export default {
     data() {
         return {
@@ -32,24 +33,12 @@ export default {
     },
     methods: {
         handleSignIn(e) {
-            e.preventDefault()
-            if (this.password.length > 0) {
-                axios.post('https://localhost/api/v1/users/login', {
-                    username: this.username,
-                    password: this.password
-                })
-                .then(response => {
-                    console.log(response.data);
-                    let data = response.data;
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('role', data.role);
-                    localStorage.setItem('id', data.id);
-                    this.$router.push('/dealerships');
-                })
-                .catch(function (error) {
-                    console.error(error.response);
-                });
-            }
+            e.preventDefault();
+			const client = new ApiClient();
+			client.login(this.username, this.password)
+			.then(response => {
+				this.$router.push('/dealerships');
+			});
         }
     }  
 }

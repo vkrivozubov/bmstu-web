@@ -31,44 +31,31 @@
 </template>
 
 <script>
-    import axios from 'axios';
-    export default {
-        props : ["nextUrl"],
-        data(){
-            return {
-                username : "",
-                password : "",
-                role: ""
-            }
-        },
-        methods : {
-            handleSignUp(e) {
-                e.preventDefault()
-                if (this.password.length > 0)
-                {
-                    let url = "https://localhost/api/v1/users/user";
-                    console.log(this.role);
-                    axios.post(url, {
-                        username: this.username,
-                        password: this.password,
-                        role: this.role
-                    })
-                    .then(response => {
-                        console.log(response.data);
-                        let data = response.data;
-                        localStorage.setItem('token', data.token);
-                        localStorage.setItem('role', data.role);
-                        localStorage.setItem('id', data.id);
-                        this.$router.push('/dealerships');
-                    })
-                } else {
-                    this.password = "";
- 
-                    return alert("Password is empty")
-                }
-            }
-        }
-    }
+import ApiClient from '@/services/ApiClient'
+
+export default {
+	data(){
+		return {
+			username : "",
+			password : "",
+			role: ""
+		}
+	},
+	methods : {
+		handleSignUp(e) {
+			e.preventDefault()
+			const client = new ApiClient();
+			client.register(
+				this.username,
+				this.password,
+				this.role
+			)
+			.then((res) => {
+				this.$router.push('/dealerships');
+			});
+		}
+	}
+}
 </script> 
 <style>
 * {

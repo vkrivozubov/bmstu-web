@@ -36,95 +36,53 @@
 
 
 <script>
-import axios from 'axios';
+import ApiClient from '@/services/ApiClient'
+import Storage from '@/services/Storage'
 
 export default {
   data() {
     return {
       cars: [],
       role: null,
-      dealership_id: null
+      dealership_id: null,
+      client: new ApiClient(),
+      storage: new Storage(window.localStorage)
     };
   },
   methods: {
     rentCar(id) {
-        const path = 'https://localhost/api/v1/cars/car/availabilty';
-        var searching_car = null;
-        for (const car of this.cars) {
-            if (car.id == id) {
-                searching_car = car;
-            }
-        }
-        console.log(!searching_car.is_available);
-        axios.patch(path,
-            {
-                car_id: id,
-                is_available: !searching_car.is_available
-            }, {
-            headers: {
-                'Authorization': `${localStorage.getItem('token')}`
-            }
-        })
-        .then(response => {
-            console.log("updated");
-            var searching_car = null;
-            for (const car of this.cars) {
-                if (car.id == id) {
-                    searching_car = car;
-                }
-            }
-            searching_car.is_available = !searching_car.is_available
-        })
-        .catch(function (error) {
-            console.error(error.response);
-        });
+        this.client.changeCarAvailability(
+          id,
+          this.cars
+        );
     },
     addCar() {
-        localStorage.setItem('dealership_id', this.dealership_id);
+        this.storage.set('dealership_id', this.dealership_id);
         this.$router.push('/dealerships/car/new');
     },
     deleteCar(id) {
-        const path = 'https://localhost/api/v1/cars/car/'+id;
-        let token = localStorage.getItem('token');
-        axios.delete(path, {
-            headers: {
-                'Authorization': `${token}`
-            }
-        })
+        // тут можно добавить промежуточный слой с логикой, который будеть стучаться в ApiClient, но того не стоит
+        this.client.deleteCar(id)
         .then((res) => {
             let new_cars = [];
-
             for (let i = 0; i < this.cars.length; i++) {
                 if (this.cars[i].id != id) {
                     new_cars.push(this.cars[i]);
                 }
             }
-
             this.cars = new_cars;
-        })
-        .catch((error) => {
-          console.error(error);
         });
     },
     getCars(dealership_id) {
-      axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-      const path = 'https://localhost/api/v1/cars/'+ dealership_id;
-      axios.get(path, {
-          headers: {
-            'Authorization': `${localStorage.getItem('token')}`
-          }
-      })
-        .then((res) => {
+      this.client.fetchCars(dealership_id)
+      .then((res) => {
           this.cars = res.data;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      });
     },
   },
   created() {
     let id = this.$route.params.id.replaceAll(':', '');
-    this.role = localStorage.getItem('role');
+    this.role = this.storage.get('role');
     this.dealership_id = id
     this.getCars(id);
   },
